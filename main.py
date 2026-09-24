@@ -56,7 +56,7 @@ elif menu == "4. RSA (Modern)":
         
     pesan = st.text_area("Masukkan Plaintext:", "HELLO")
     
-    if st.button("Jalankan Enkripsi RSA", type="primary"):
+    if st.button("Jalankan Enkripsi & Dekripsi RSA", type="primary"):
         try:
             # --- LOGIKA MATEMATIKA ---
             n = p * q
@@ -79,6 +79,9 @@ elif menu == "4. RSA (Modern)":
             * **Kunci Privat ($d$)** = `{d}` *(Syarat: $(d \\times e) \\pmod{{\\phi}} = 1$)*
             """)
             
+            # ==========================================
+            # BAGIAN ENKRIPSI RSA
+            # ==========================================
             st.subheader("2. Proses Enkripsi ($C = M^e \\pmod n$)")
             
             ciphertext_blocks = []
@@ -92,8 +95,27 @@ elif menu == "4. RSA (Modern)":
                 # Menampilkan breakdown per huruf
                 st.write(f"Karakter **'{char}'** $\\rightarrow$ ASCII ($M$): **{m}** $\\rightarrow$ $({m}^{e}) \\pmod{{{n}}}$ = **{c}**")
             
-            st.divider()
             st.success(f"**Hasil Ciphertext:** {' '.join(ciphertext_blocks)}")
+            
+            # ==========================================
+            # BAGIAN DEKRIPSI RSA (OTOMATIS)
+            # ==========================================
+            st.divider()
+            st.subheader("3. Proses Dekripsi ($M = C^d \\pmod n$)")
+            
+            plaintext_result = ""
+            st.write("Breakdown proses pembuktian dekripsi per blok angka:")
+            
+            for block in ciphertext_blocks:
+                c_val = int(block)
+                m_val = pow(c_val, d, n) # Rumus Dekripsi RSA
+                char_val = chr(m_val) # Konversi ASCII kembali ke huruf
+                plaintext_result += char_val
+                
+                # Menampilkan proses ke layar
+                st.write(f"Cipher blok **{c_val}** $\\rightarrow$ $({c_val}^{d}) \\pmod{{{n}}}$ = **{m_val}** $\\rightarrow$ Karakter **'{char_val}'**")
+            
+            st.success(f"**Hasil Plaintext Asli:** {plaintext_result}")
             
         except Exception as err:
             st.error(f"Terjadi kesalahan perhitungan. Pastikan nilai p dan q adalah bilangan prima yang valid. Detail: {err}")
